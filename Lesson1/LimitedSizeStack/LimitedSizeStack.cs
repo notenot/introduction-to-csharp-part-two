@@ -1,33 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace TodoApplication
 {
     public class LimitedSizeStack<T>
     {
+        public int Count => LinkedList.Count;
+        public int Limit { get; }
+        private LinkedList<T> LinkedList { get; }
+
         public LimitedSizeStack(int limit)
         {
+            Limit = limit;
+            LinkedList = new LinkedList<T>();
         }
 
         public void Push(T item)
         {
-            throw new NotImplementedException();
+            if (LinkedList.Count == Limit)
+                LinkedList.RemoveFirst();
+            LinkedList.AddLast(item);
         }
 
         public T Pop()
         {
-            throw new NotImplementedException();
-        }
-
-        public int Count
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
+            var item = LinkedList.Last.Value;
+            LinkedList.RemoveLast();
+            return item;
         }
     }
 }
