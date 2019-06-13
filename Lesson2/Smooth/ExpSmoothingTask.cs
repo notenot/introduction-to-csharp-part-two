@@ -6,8 +6,18 @@ namespace yield
 	{
 		public static IEnumerable<DataPoint> SmoothExponentialy(this IEnumerable<DataPoint> data, double alpha)
 		{
-			//Fix me!
-			return data;
-		}
-	}
+            var smoothed = 0.0;
+            var isFirst = true;
+            foreach (var point in data)
+            {
+                point.ExpSmoothedY = isFirst
+                    ? point.OriginalY
+                    : alpha * point.OriginalY + (1.0 - alpha) * smoothed;
+                isFirst = false;
+                smoothed = point.ExpSmoothedY;
+                
+                yield return point;
+            }
+        }
+    }
 }
