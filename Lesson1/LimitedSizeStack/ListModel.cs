@@ -7,24 +7,24 @@ namespace TodoApplication
     {
         public List<TItem> Items { get; }
         public int Limit { get; }
-        private LimitedSizeStack<Tuple<char, TItem, int>> Stack { get; }
+        private LimitedSizeStack<Tuple<TItem, int>> Stack { get; }
 
         public ListModel(int limit)
         {
             Limit = limit;
             Items = new List<TItem>();
-            Stack = new LimitedSizeStack<Tuple<char, TItem, int>>(Limit);
+            Stack = new LimitedSizeStack<Tuple<TItem, int>>(Limit);
         }
 
         public void AddItem(TItem item)
         {
-            Stack.Push(new Tuple<char, TItem, int>('+', item, 0));
+            Stack.Push(new Tuple<TItem, int>(item, -1));
             Items.Add(item);
         }
 
         public void RemoveItem(int index)
         {
-            Stack.Push(new Tuple<char, TItem, int>('-', Items[index], index));
+            Stack.Push(new Tuple<TItem, int>(Items[index], index));
             Items.RemoveAt(index);
         }
 
@@ -39,15 +39,13 @@ namespace TodoApplication
                 return;
 
             var lastAction = Stack.Pop();
-            switch (lastAction.Item1)
-            {
-                case '+':
-                    Items.Remove(lastAction.Item2);
-                    break;
-                case '-':
-                    Items.Insert(lastAction.Item3, lastAction.Item2);
-                    break;
-            }
+            var index = lastAction.Item2;
+            var item = lastAction.Item1;
+
+            if (index < 0)
+                Items.Remove(item);
+            else
+                Items.Insert(index, item);
         }
     }
 }
