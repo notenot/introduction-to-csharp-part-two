@@ -11,7 +11,7 @@ namespace func_rocket
 		/// </summary>
 		public static RocketForce GetThrustForce(double forceValue)
 		{
-			return r => Vector.Zero;
+			return r => new Vector(forceValue, 0).Rotate(r.Direction);
 		}
 
 		/// <summary>
@@ -19,15 +19,15 @@ namespace func_rocket
 		/// </summary>
 		public static RocketForce ConvertGravityToForce(Gravity gravity, Size spaceSize)
 		{
-			return r => Vector.Zero;
-		}
+			return r => gravity(spaceSize, r.Location);
+        }
 
 		/// <summary>
 		/// Суммирует все переданные силы, действующие на ракету, и возвращает суммарную силу.
 		/// </summary>
 		public static RocketForce Sum(params RocketForce[] forces)
-		{
-			return forces[0];
-		}
+        {
+            return r => forces.Aggregate(Vector.Zero, (sum, force) => sum + force(r));
+        }
 	}
 }
